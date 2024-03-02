@@ -20,7 +20,7 @@ The result? No more ads on Twitch, and when I switched from mobile data to WiFi,
 
 Pi-hole works by checking each DNS query against its blocklist, allowing or blocking queries accordingly. It's effective because many sites use separate domains for ads and tracking. However, ads served from the same domains as regular content, like on YouTube, can't be blocked by Pi-hole.
 
-![{Pi-hole Dashboard}](https://github.com/roopeshvs/roopeshvs.github.io/blob/main/pi-hole-dashboard.png?raw=true)
+![{Pi-hole Dashboard}](https://github.com/roopeshvs/roopeshvs.github.io/blob/main/static/images/pi-hole-dashboard.png?raw=true)
 
 Notice that over one out of ten DNS queries are getting blocked by Pi-hole.
 

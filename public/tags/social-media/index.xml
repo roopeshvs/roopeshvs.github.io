@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Social Media on Roopesh V S</title>
+    <link>http://localhost:1313/tags/social-media/</link>
+    <description>Recent content in Social Media on Roopesh V S</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Sep 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/social-media/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How Sherlock knows if you are on Facebook</title>
+      <link>http://localhost:1313/sherlock-facebook/</link>
+      <pubDate>Mon, 12 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/sherlock-facebook/</guid>
+      <description>Sherlock is a CLI tool that can be used to find usernames across many social networks. In this post, I share how Sherlock was able to overcome a couple of hurdles in reliably finding if a username existed on Facebook. Sherlock works by having a JSON file as the source where a large collection of sites are listed with a few attributes.&#xA;A sample entry from the file looks like this:</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <title>How Sherlock knows if you are on Facebook | Roopesh V S</title>
+
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">    
+<meta name="viewport" content="width=device-width,minimum-scale=1">
+<meta name="description" content="Sherlock is a CLI tool that can be used to find usernames across many social networks. In this post, I share how Sherlock was able to overcome a couple of hurdles in reliably finding if a username existed on Facebook. Sherlock works by having a JSON file as the source where a large collection of sites are listed with a few attributes.
+A sample entry from the file looks like this:">
+<meta name="generator" content="Hugo 0.123.6">
+
+
+  <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+
+ 
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JBPFCP1590"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-JBPFCP1590', { 'anonymize_ip': false });
+}
+</script>
+
+
+
+
+
+
+
+
+  </head>
+
+  <body>
+    <nav class="navigation">
+	
+		<a href="/"> <span class="arrow">←</span>Home</a>
+	
+	<a href="/posts">Archive</a>
+	<a href="/tags">Tags</a>
+	<a href="/about">About</a>
+
+	
+
+	
+	  <a class="button" href="http://localhost:1313/index.xml">Subscribe</a>
+	
+</nav>
+
+
+    <main class="main">
+      
+
+<section id="single">
+    <h1 class="title">How Sherlock knows if you are on Facebook</h1>
+
+    <div class="tip">
+        <time datetime="2022-09-12 00:00:00 &#43;0000 UTC">Sep 12, 2022</time>
+        <span class="split">
+          ·
+        </span>
+        <span>
+          535 words
+        </span>
+        <span class="split">
+          ·
+        </span>
+        <span>
+          3 minute read
+        </span>
+    </div>
+
+    
+    
+        
+  
+
+
+    
+
+
+    <div class="content">
+      <p><a href="https://github.com/sherlock-project/sherlock" target="_blank" rel="noopener">Sherlock</a> is a CLI tool that can be used to find usernames across many social networks. In this post, I share how Sherlock was able to overcome a couple of hurdles in reliably finding if a username existed on Facebook. Sherlock works by having <a href="https://github.com/sherlock-project/sherlock/blob/master/sherlock/resources/data.json" target="_blank" rel="noopener">a JSON file as the source</a> where a large collection of sites are listed with a few attributes.</p>
+<p>A sample entry from the file looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#b44">&#34;Reddit&#34;</span><span style="">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;errorMsg&#34;</span>: <span style="color:#b44">&#34;Sorry, nobody on Reddit goes by that name.&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;errorType&#34;</span>: <span style="color:#b44">&#34;message&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;url&#34;</span>: <span style="color:#b44">&#34;https://www.reddit.com/user/{}&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;urlMain&#34;</span>: <span style="color:#b44">&#34;https://www.reddit.com/&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>Each site has its own way of handling usernames that do not exist. To know if a particular username is on the site, Sherlock sends a request to the URL defined in the <code>url</code> or the <code>urlProbe</code> field and evaluates the response depending on the type of error defined in the <code>errorType</code> field. The <code>errorType</code> field could be one of <code>status_code</code> - HTTP Response Error Codes, <code>message</code> - HTTP Response Body that says there is no user by that username or <code>response_url</code> - Redirecting to a different page if the username is not found, depending on the method appropriate for consistently finding users without false positives.</p>
+<p>Sherlock was using the <code>status_code</code> error type to figure out if the username existed on Facebook.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#b44">&#34;Facebook&#34;</span><span style="">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;errorType&#34;</span>: <span style="color:#b44">&#34;status_code&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;url&#34;</span>: <span style="color:#b44">&#34;https://www.facebook.com/{}&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;urlMain&#34;</span>: <span style="color:#b44">&#34;https://www.facebook.com/&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p><a href="https://github.com/sherlock-project/sherlock/issues/725" target="_blank" rel="noopener">One user raised a GitHub issue</a> saying Sherlock could not find his username on Facebook. I vividly remembered Sherlock being able to find my username on Facebook.</p>
+<p>Probing into this mystery, I discovered there was a privacy setting on Facebook that disallowed search engines outside of Facebook to link to one&rsquo;s profile.</p>
+<p align="center">
+<a target='_blank'><img src='https://i.postimg.cc/L4rXh8xg/fb.png' border='0' alt='fb'/></a>
+</p>
+<p>Only when the search engines were allowed to link to one&rsquo;s facebook profile at <code>facebook.com/{username}</code>, the requests to that profile returned <code>200 OK</code> otherwise even when a user with that username existed on facebook the response was <code>404 NOT FOUND</code>. This is why the status code approach was inconsistent.</p>
+<p>One of the trivial ways to bypass this issue would be to login to facebook and then check for the username. However, for Sherlock, authenticating was not an option!</p>
+<p>I wanted to check if there was a profile path Sherlock can reliably use without authenticating that would also bypass the privacy option. With turning on and off the privacy option on my facebook profile, I started testing various paths like <code>/about</code>, <code>/images</code>, <code>/photo</code> and their responses.</p>
+<p>Few minutes into the search I stumbled upon <code>/videos</code> and I was able to see my expectations come alive. <code>facebook.com/{username}/videos</code> showed the login page when the username existed and only responded with <code>This page isn't available</code> when the username was not yet taken on Facebook. As this path did not care for the search engine privacy option as well, it was perfect!</p>
+<p><a href="https://github.com/sherlock-project/sherlock/pull/737" target="_blank" rel="noopener">The site resource file was updated to check</a> for an error message &amp; use the <code>/videos</code> path and voila! This now allows Sherlock to check if a username is on facebook without authentication and irrespective of the search engine privacy option they&rsquo;ve opted to go with.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#b44">&#34;Facebook&#34;</span><span style="">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;errorMsg&#34;</span>: <span style="color:#b44">&#34;This page isn&#39;t available&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;errorType&#34;</span>: <span style="color:#b44">&#34;message&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&#34;urlProbe&#34;</span>: <span style="color:#b44">&#34;https://www.facebook.com/{}/videos/&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="">...</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>A hacky and elementary fix to help Sherlock find your facebook ID.</p>
+
+    </div>
+
+    
+        <div class="tags">
+            
+                <a href="http://localhost:1313/tags/social-media">social media</a>
+            
+                <a href="http://localhost:1313/tags/privacy">privacy</a>
+            
+        </div>
+    
+    
+    
+  <div id="comment">
+    
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "roopeshvs" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+
+
+</section>
+
+
+    </main>
+    
+    <footer id="footer">
+    
+        <div id="social">
+
+
+    <a class="symbol" href="https://github.com/roopeshvs" rel="me" target="_blank">
+        
+        <svg fill="#bbbbbb" width="28" height="28"  viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <title>Github</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)">
+            <g id="Github" transform="translate(264.000000, 939.000000)">
+                <path d="M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z" id="Rounded" fill="#bbbbbb"></path>
+                <path d="M35.9985,13 C22.746,13 12,23.7870921 12,37.096644 C12,47.7406712 18.876,56.7718301 28.4145,59.9584121 C29.6145,60.1797862 30.0525,59.4358488 30.0525,58.7973276 C30.0525,58.2250681 30.0315,56.7100863 30.0195,54.6996482 C23.343,56.1558981 21.9345,51.4693938 21.9345,51.4693938 C20.844,48.6864054 19.2705,47.9454799 19.2705,47.9454799 C17.091,46.4500754 19.4355,46.4801943 19.4355,46.4801943 C21.843,46.6503662 23.1105,48.9634994 23.1105,48.9634994 C25.2525,52.6455377 28.728,51.5823398 30.096,50.9649018 C30.3135,49.4077535 30.9345,48.3460615 31.62,47.7436831 C26.2905,47.1352808 20.688,45.0691228 20.688,35.8361671 C20.688,33.2052792 21.6225,31.0547881 23.1585,29.3696344 C22.911,28.7597262 22.0875,26.3110578 23.3925,22.9934585 C23.3925,22.9934585 25.4085,22.3459017 29.9925,25.4632101 C31.908,24.9285993 33.96,24.6620468 36.0015,24.6515052 C38.04,24.6620468 40.0935,24.9285993 42.0105,25.4632101 C46.5915,22.3459017 48.603,22.9934585 48.603,22.9934585 C49.9125,26.3110578 49.089,28.7597262 48.8415,29.3696344 C50.3805,31.0547881 51.309,33.2052792 51.309,35.8361671 C51.309,45.0917119 45.6975,47.1292571 40.3515,47.7256117 C41.2125,48.4695491 41.9805,49.9393525 41.9805,52.1877301 C41.9805,55.4089489 41.9505,58.0067059 41.9505,58.7973276 C41.9505,59.4418726 42.3825,60.1918338 43.6005,59.9554002 C53.13,56.7627944 60,47.7376593 60,37.096644 C60,23.7870921 49.254,13 35.9985,13" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
+    </a>
+
+    <a class="symbol" href="https://www.linkedin.com/in/roopesh-vs/" rel="me" target="_blank">
+        
+        <svg width="28" height="28" fill="#bbbbbb" viewBox="0 0 500 500">
+  <g fill="none" fill-rule="evenodd">
+    <rect width="500" height="500" fill="#bbbbbb" rx="50"/>
+    <path fill="#FFF" d="M154.703 100.183c-19.121 0-34.689 15.565-34.703 34.701 0 19.136 15.568 34.704 34.703 34.704 19.128 0 34.688-15.568 34.688-34.704 0-19.134-15.561-34.701-34.688-34.701zm26.045 83.348h-52.094a4.488 4.488 0 0 0-4.488 4.489v167.675a4.488 4.488 0 0 0 4.488 4.488h52.093a4.49 4.49 0 0 0 4.489-4.488V188.02a4.486 4.486 0 0 0-4.488-4.489zm133.176-1.974c-19.064 0-35.817 5.805-46.04 15.271v-8.808c0-2.48-2.01-4.489-4.489-4.489h-49.971a4.489 4.489 0 0 0-4.489 4.489v167.675a4.488 4.488 0 0 0 4.489 4.488h52.044a4.49 4.49 0 0 0 4.489-4.488v-82.957c0-23.802 4.378-38.555 26.227-38.555 21.526.026 23.137 15.846 23.137 39.977v81.535a4.489 4.489 0 0 0 4.49 4.488h52.068a4.489 4.489 0 0 0 4.488-4.488v-91.977c-.001-38.253-7.553-82.161-66.443-82.161z"/>
+  </g>
+</svg>
+
+    </a>
+
+
+</div>
+
+    
+
+    <div class="copyright">
+    
+        © Copyright 2024 ❤️ Roopesh
+    
+    </div>
+
+    
+</footer>
+
+
+
+  </body>
+</html>

@@ -2,7 +2,8 @@ baseURL: https://roopesh.dev
 languageCode: en-us
 title: Roopesh V S
 theme: 
-   - github.com/roopeshvs/hugo-theme-mini
+  #  - github.com/roopeshvs/hugo-theme-mini
+     - github.com/nodejh/hugo-theme-mini
 
 # Default content language, support en (English) / zh (Chinese) / nl (Dutch) / fr (French) / es (Spanish) / da (Danish), default 'en'
 defaultContentLanguage: en

@@ -1,6 +1,6 @@
 +++
 title = "How Sherlock knows if you are on Facebook"
-tags = ["social media", "privacy"]
+tags = ["social media", "privacy", "open-source"]
 date = 2022-09-12
 +++
 

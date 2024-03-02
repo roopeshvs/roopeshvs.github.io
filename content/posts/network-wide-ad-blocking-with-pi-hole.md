@@ -6,7 +6,7 @@ date = 2024-03-02
 
 Today, many of us rely on browser extensions to block annoying ads and tracking while browsing on our computers. They work well for desktop browsers, but what about our mobiles, tablets, smart TVs, and game consoles? They're left vulnerable to ads because these extensions don't work on them. We've come to accept ads as a necessary evil, but it doesn't have to be that way.
 
-With a simple setup using a **Raspberry Pi** and a tool called **Pi-hole**, you can block ads and tracking across all devices on your home network. It's not limited to a Raspberry Pi; you can run it on any machine using Docker, but the Pi is preferred for its low power consumption.
+With a simple setup using a **Raspberry Pi** and a tool called **Pi-hole**, you can block ads and tracking across all devices on your home network. It's not limited to a Raspberry Pi; you can run it on any machine using Docker, but the Pi is preferred for its low power consumption as it needs to run 24x7.
 
 My frustration with ads reached its peak while watching a [Dota 2](https://www.dota2.com/home) tournament on the [Twitch](https://twitch.tv) app in my Xbox Series X, where a browser-level or device-level solution for ads do not exist. Every time I switched channels, the same unskippable ad played, and I'd had enough. I remembered hearing about Pi-hole and decided to give it a try with my idle **Raspberry Pi 400**.
 
